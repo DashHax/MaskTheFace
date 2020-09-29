@@ -62,6 +62,12 @@ parser.add_argument(
     help="Generate specific formats",
 )
 
+parser.add_argument(
+    "--face-size",
+    type=int,
+    default=-1,
+    help="The size of which the image should be resized. -1 for keep original. Default is -1."
+)
 
 parser.add_argument(
     "--verbose", dest="verbose", action="store_true", help="Turn verbosity on"
@@ -89,6 +95,9 @@ args.predictor = dlib.shape_predictor(path_to_dlib_model)
 mask_code = "".join(args.code.split()).split(",")
 args.code_count = np.zeros(len(mask_code))
 args.mask_dict_of_dict = {}
+
+faceSize = args.face_size
+isResize = faceSize != -1
 
 
 for i, entry in enumerate(mask_code):
@@ -157,7 +166,10 @@ if is_directory:
                 bottom = max(bottom, 0)
 
                 img = img[top:bottom, left:right]
-                img = cv2.resize(img, (112, 112), interpolation=cv2.INTER_CUBIC)
+
+                if isResize:
+                    dim = (faceSize, faceSize)
+                    img = cv2.resize(img, dim, interpolation=cv2.INTER_CUBIC)
 
                 cv2.imwrite(w_path, img)
 
@@ -205,7 +217,10 @@ if is_directory:
                     bottom = max(bottom, 0)
 
                     img = img[top:bottom, left:right]
-                    img = cv2.resize(img, (112, 112), interpolation=cv2.INTER_CUBIC)
+
+                    if isResize:
+                        dim = (faceSize, faceSize)
+                        img = cv2.resize(img, dim, interpolation=cv2.INTER_CUBIC)
 
                     # Write the masked image
                     cv2.imwrite(w_path, img)
@@ -240,7 +255,11 @@ elif is_file:
             bottom = max(bottom, 0)
 
             img = img[top:bottom, left:right]
-            img = cv2.resize(img, (112, 112), interpolation=cv2.INTER_CUBIC)
+
+            if isResize:
+                dim = (faceSize, faceSize)
+                img = cv2.resize(img, dim, interpolation=cv2.INTER_CUBIC)
+
             cv2.imwrite(w_path, img)
 else:
     print("Path is neither a valid file or a valid directory")
