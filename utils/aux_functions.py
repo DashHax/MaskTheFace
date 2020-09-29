@@ -595,6 +595,7 @@ def mask_image(image_path, args):
     masked_images = []
     mask_binary_array = []
     mask = []
+    locs = []
     for (i, face_location) in enumerate(face_locations):
         shape = args.predictor(gray, face_location)
         shape = face_utils.shape_to_np(shape)
@@ -634,7 +635,9 @@ def mask_image(image_path, args):
             mask = available_mask_types
             cc = 1
 
-    return masked_images, mask, mask_binary_array, original_image
+        locs.append(face_location)
+
+    return masked_images, mask, mask_binary_array, original_image, locs
 
 
 def is_image(path):

@@ -169,7 +169,7 @@ if is_directory:
             if is_image(image_path):
                 # Proceed if file is image
                 split_path = f.rsplit(".")
-                masked_image, mask, mask_binary, original_image = mask_image(
+                masked_image, mask, mask_binary, original_image, locs = mask_image(
                     image_path, args
                 )
                 for i in range(len(mask)):
