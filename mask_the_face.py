@@ -133,7 +133,7 @@ if is_directory:
                 tqdm.write(str_p)
 
             split_path = f.rsplit(".")
-            masked_image, mask, mask_binary_array, original_image = mask_image(
+            masked_image, mask, mask_binary_array, original_image, locs = mask_image(
                 image_path, args
             )
             for i in range(len(mask)):
@@ -147,6 +147,18 @@ if is_directory:
                     + split_path[1]
                 )
                 img = masked_image[i]
+
+                loc = locs[i]
+                left, right, bottom, top = loc
+
+                left = max(left, 0)
+                right = max(right, 0)
+                top = max(top, 0)
+                bottom = max(bottom, 0)
+
+                img = img[top:bottom, left:right]
+                img = cv2.resize(img, (112, 112), interpolation=cv2.INTER_CUBIC)
+
                 cv2.imwrite(w_path, img)
 
     print_orderly("Masking image directories", 60)
@@ -184,6 +196,17 @@ if is_directory:
                     )
                     w_path_original = write_path + "/" + f
                     img = masked_image[i]
+                    loc = locs[i]
+                    left, right, bottom, top = loc
+
+                    left = max(left, 0)
+                    right = max(right, 0)
+                    top = max(top, 0)
+                    bottom = max(bottom, 0)
+
+                    img = img[top:bottom, left:right]
+                    img = cv2.resize(img, (112, 112), interpolation=cv2.INTER_CUBIC)
+
                     # Write the masked image
                     cv2.imwrite(w_path, img)
                     if args.write_original_image:
@@ -201,12 +224,23 @@ elif is_file:
     if is_image(image_path):
         # Proceed if file is image
         # masked_images, mask, mask_binary_array, original_image
-        masked_image, mask, mask_binary_array, original_image = mask_image(
+        masked_image, mask, mask_binary_array, original_image, locs = mask_image(
             image_path, args
         )
         for i in range(len(mask)):
             w_path = write_path + "_" + mask[i] + "." + args.path.rsplit(".")[1]
             img = masked_image[i]
+
+            loc = locs[i]
+            left, right, bottom, top = loc
+
+            left = max(left, 0)
+            right = max(right, 0)
+            top = max(top, 0)
+            bottom = max(bottom, 0)
+
+            img = img[top:bottom, left:right]
+            img = cv2.resize(img, (112, 112), interpolation=cv2.INTER_CUBIC)
             cv2.imwrite(w_path, img)
 else:
     print("Path is neither a valid file or a valid directory")

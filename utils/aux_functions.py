@@ -565,7 +565,7 @@ def rect_to_bb(rect):
     x2 = rect.right()
     y1 = rect.top()
     y2 = rect.bottom()
-    return (x1, x2, y2, x1)
+    return (x1, x2, y2, y1)
 
 
 def mask_image(image_path, args):
