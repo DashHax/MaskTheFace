@@ -70,6 +70,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--crop-flag",
+    type=int,
+    default=0,
+    help="Flag to control if the masking will also extract the face region. 0 for False, 1 for True. Default is 0."
+)
+
+parser.add_argument(
     "--verbose", dest="verbose", action="store_true", help="Turn verbosity on"
 )
 parser.add_argument(
@@ -98,6 +105,9 @@ args.mask_dict_of_dict = {}
 
 faceSize = args.face_size
 isResize = faceSize != -1
+
+cropFlag = args.crop_flag
+isCrop = cropFlag == 1
 
 
 for i, entry in enumerate(mask_code):
@@ -157,19 +167,20 @@ if is_directory:
                 )
                 img = masked_image[i]
 
-                loc = locs[i]
-                left, right, bottom, top = loc
+                if isCrop:
+                    loc = locs[i]
+                    left, right, bottom, top = loc
 
-                left = max(left, 0)
-                right = max(right, 0)
-                top = max(top, 0)
-                bottom = max(bottom, 0)
+                    left = max(left, 0)
+                    right = max(right, 0)
+                    top = max(top, 0)
+                    bottom = max(bottom, 0)
 
-                img = img[top:bottom, left:right]
+                    img = img[top:bottom, left:right]
 
-                if isResize:
-                    dim = (faceSize, faceSize)
-                    img = cv2.resize(img, dim, interpolation=cv2.INTER_CUBIC)
+                    if isResize:
+                        dim = (faceSize, faceSize)
+                        img = cv2.resize(img, dim, interpolation=cv2.INTER_CUBIC)
 
                 cv2.imwrite(w_path, img)
 
@@ -208,19 +219,21 @@ if is_directory:
                     )
                     w_path_original = write_path + "/" + f
                     img = masked_image[i]
-                    loc = locs[i]
-                    left, right, bottom, top = loc
 
-                    left = max(left, 0)
-                    right = max(right, 0)
-                    top = max(top, 0)
-                    bottom = max(bottom, 0)
+                    if isCrop:
+                        loc = locs[i]
+                        left, right, bottom, top = loc
 
-                    img = img[top:bottom, left:right]
+                        left = max(left, 0)
+                        right = max(right, 0)
+                        top = max(top, 0)
+                        bottom = max(bottom, 0)
 
-                    if isResize:
-                        dim = (faceSize, faceSize)
-                        img = cv2.resize(img, dim, interpolation=cv2.INTER_CUBIC)
+                        img = img[top:bottom, left:right]
+
+                        if isResize:
+                            dim = (faceSize, faceSize)
+                            img = cv2.resize(img, dim, interpolation=cv2.INTER_CUBIC)
 
                     # Write the masked image
                     cv2.imwrite(w_path, img)
@@ -246,19 +259,20 @@ elif is_file:
             w_path = write_path + "_" + mask[i] + "." + args.path.rsplit(".")[1]
             img = masked_image[i]
 
-            loc = locs[i]
-            left, right, bottom, top = loc
+            if isCrop:
+                loc = locs[i]
+                left, right, bottom, top = loc
 
-            left = max(left, 0)
-            right = max(right, 0)
-            top = max(top, 0)
-            bottom = max(bottom, 0)
+                left = max(left, 0)
+                right = max(right, 0)
+                top = max(top, 0)
+                bottom = max(bottom, 0)
 
-            img = img[top:bottom, left:right]
+                img = img[top:bottom, left:right]
 
-            if isResize:
-                dim = (faceSize, faceSize)
-                img = cv2.resize(img, dim, interpolation=cv2.INTER_CUBIC)
+                if isResize:
+                    dim = (faceSize, faceSize)
+                    img = cv2.resize(img, dim, interpolation=cv2.INTER_CUBIC)
 
             cv2.imwrite(w_path, img)
 else:
