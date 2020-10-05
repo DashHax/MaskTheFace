@@ -192,6 +192,10 @@ if is_directory:
         dir_write_path = args.write_path + "/" + d
         if not os.path.isdir(dir_write_path):
             os.makedirs(dir_write_path)
+        else:
+            print("Skipping...")
+            continue
+
         _, _, files = os.walk(dir_path).__next__()
 
         # Process each files within subdirectory
@@ -201,10 +205,6 @@ if is_directory:
                 str_p = "Processing: " + image_path
                 tqdm.write(str_p)
             write_path = dir_write_path
-
-            if os.path.exists(write_path):
-                print("Skipping...")
-                continue
 
             if is_image(image_path):
                 # Proceed if file is image
