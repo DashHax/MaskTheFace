@@ -201,6 +201,11 @@ if is_directory:
                 str_p = "Processing: " + image_path
                 tqdm.write(str_p)
             write_path = dir_write_path
+
+            if os.path.exists(write_path):
+                print("Skipping...")
+                continue
+
             if is_image(image_path):
                 # Proceed if file is image
                 split_path = f.rsplit(".")
